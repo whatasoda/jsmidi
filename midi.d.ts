@@ -1,9 +1,9 @@
 export = jsmidi;
 declare namespace jsmidi {
-  const MidiEvent: {
-    noteOn(note: Note): MidiEvent;
-    noteOff(note: Note): MidiEvent;
-  };
+  class MidiEvent {
+    static noteOn(note: Note): MidiEvent;
+    static noteOff(note: Note): MidiEvent;
+  }
 
   class MidiTrack {
     constructor(options: MidiTrackOptions);
