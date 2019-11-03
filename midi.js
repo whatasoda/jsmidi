@@ -264,7 +264,7 @@ const MidiWriter = function(config) {
     });
 
     return {
-      b64: btoa(hexMidi),
+      b64: Buffer.from(hexMidi, 'hex').toString('base64'),
       play() {
         if (document) {
           const embed = document.createElement('embed');
