@@ -10,6 +10,7 @@ const HDR_CHUNKID = 'MThd';
 const HDR_CHUNK_SIZE = '\x00\x00\x00\x06'; // Header size for SMF
 const HDR_TYPE0 = '\x00\x00'; // Midi Type 0 id
 // const HDR_TYPE1 = '\x00\x01'; // Midi Type 1 id
+// const HDR_SPEED = '\xe8\x0a'; // 240 ticks per second
 const HDR_SPEED = '\x00\x80'; // Defaults to 128 ticks per beat
 
 // Midi event codes
@@ -263,8 +264,12 @@ const MidiWriter = function(config) {
       hexMidi += codes2Str(trk.toBytes());
     });
 
+    let b64 = '';
     return {
-      b64: Buffer.from(hexMidi, 'utf-8').toString('base64'),
+      buffer: Buffer.from(hexMidi, 'ascii'),
+      get b64() {
+        return b64 || (b64 = this.buffer.toString('base64'));
+      },
       play() {
         if (document) {
           const embed = document.createElement('embed');
@@ -274,11 +279,11 @@ const MidiWriter = function(config) {
         }
       },
       save() {
-        // window.open(
-        //   'data:audio/midi;base64,' + this.b64,
-        //   'JSMidi generated output',
-        //   'resizable=yes,scrollbars=no,status=no',
-        // );
+        window.open(
+          'data:audio/midi;base64,' + this.b64,
+          'JSMidi generated output',
+          'resizable=yes,scrollbars=no,status=no',
+        );
       },
     };
   } else {
@@ -400,7 +405,7 @@ class MidiEvent {
 
   type = 0;
   channel = 0;
-  time = 0;
+  time = [0];
   setTime(ticks) {
     // The 0x00 byte is always the last one. This is how Midi
     // interpreters know that the time measure specification ends and the
@@ -433,7 +438,7 @@ class MidiEvent {
 
     const typeChannelByte = parseInt(this.type.toString(16) + this.channel.toString(16), 16);
 
-    byteArray.push.apply(byteArray, this.time);
+    byteArray.push(...this.time);
     byteArray.push(typeChannelByte);
     byteArray.push(this.param1);
 

@@ -26,6 +26,7 @@ declare namespace jsmidi {
   }
 
   interface Song {
+    buffer: Buffer;
     b64: string;
   }
 
