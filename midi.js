@@ -168,7 +168,7 @@ const noteTable = {
  * @returns hexadecimal string
  */
 function codes2Str(byteArray) {
-  return String.fromCharCode.apply(null, byteArray);
+  return String.fromCharCode(...byteArray);
 }
 
 /**
@@ -264,7 +264,7 @@ const MidiWriter = function(config) {
     });
 
     return {
-      b64: Buffer.from(hexMidi, 'hex').toString('base64'),
+      b64: Buffer.from(hexMidi, 'utf-8').toString('base64'),
       play() {
         if (document) {
           const embed = document.createElement('embed');
